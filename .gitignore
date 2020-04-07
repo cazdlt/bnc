@@ -3,3 +3,6 @@ __pycache__/bnc.cpython-37.pyc
 __pycache__/test_bnc.cpython-37-pytest-5.2.2.pyc
 .vscode/launch.json
 .vscode/settings.json
+.pytest_cache/v/cache/lastfailed
+.pytest_cache/v/cache/nodeids
+.pytest_cache/v/cache/stepwise
