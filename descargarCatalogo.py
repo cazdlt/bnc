@@ -4,7 +4,7 @@ import re
 
 buscar="George List"
 root_salida="output"
-num_elementos=2
+num_elementos=5
 
 print("Buscando...")
 resultados=bnc().search(buscar,max_elements=num_elementos)
@@ -13,16 +13,14 @@ print(f"Descargando los primeros {num_elementos}\n")
 
 catalogo="DESCARGADO:\n\n"
 for idx,resultado in enumerate(resultados):
-
-    if idx>num_elementos-1:
+    
+    if idx>num_elementos-1: #solo descarga los elementos indicados por el usuario
         break
 
     filename=re.sub('[\\\/\*\?\|\[\]\(\):"<>]',"",resultado.titulo)
-    filename=re.sub("\s{2,}"," - ",filename)
-
+    filename=re.sub("\s{2,}"," - ",filename)+" - "+resultado.fecha
+    
     path=f"./{root_salida}/{buscar}/{filename}"
-    os.makedirs(path, exist_ok=True)
-
     info=f"Título: {resultado.titulo}\n"
     info+=f"Autor: {resultado.autor}\n"
     info+=f"Fecha: {resultado.fecha}\n"
@@ -32,8 +30,13 @@ for idx,resultado in enumerate(resultados):
     info+=f"Ruta: {path}\n\n"
     catalogo+=info
 
-    print(f"\nDescargando de: {resultado}")
-    resultado.downloadContent(path=path+"/"+filename)
+    if os.path.isfile(f"{path}/info.txt"):
+        print(f"El contenido de {resultado} ya ha sido descargado")
+    else:
+        os.makedirs(path, exist_ok=True)       
+        print(f"\nDescargando de: {resultado}")
+        resultado.downloadContent(path=path+"/"+filename)
+
     open(f"{path}/info.txt","w+",encoding="utf-8").write(info)
 
 open(f"./{root_salida}/{buscar}/catalogo.txt","w+",encoding="utf-8").write(catalogo)

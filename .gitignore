@@ -1,16 +1,6 @@
-san_jacinto.mp3
-__pycache__/bnc.cpython-37.pyc
-__pycache__/test_bnc.cpython-37-pytest-5.2.2.pyc
-.vscode/launch.json
-.vscode/settings.json
-.pytest_cache/v/cache/lastfailed
-.pytest_cache/v/cache/nodeids
-.pytest_cache/v/cache/stepwise
-__pycache__/utils.cpython-37.pyc
-__pycache__/tictoc.cpython-37.pyc
-output/George List/catalogo.txt
-output/George List/Entrevistas a decimeros - George List/Entrevistas a decimeros - George List.mp3
-output/George List/Entrevistas a decimeros - George List/info.txt
-output/George List/Música interpretada por los Gaiteros de San Jacinto y preguntas - George List/info.txt
-output/George List/Música interpretada por los Gaiteros de San Jacinto y preguntas - George List/Música interpretada por los Gaiteros de San Jacinto y preguntas - George List.mp3
-__pycache__/test_bnc.cpython-37-pytest-5.4.1.pyc
+__pycache__/*
+.vscode/*
+.pytest_cache/*
+__pycache__/*
+output/*
+
