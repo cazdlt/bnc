@@ -1,7 +1,8 @@
-#leer audio quicktime del catálogo de la biblioteca nacional
 import requests
 from bs4 import BeautifulSoup
 import re
+import utils
+from tictoc import tic,toc
 
 class ElementoBNC():
     """
@@ -17,16 +18,13 @@ class ElementoBNC():
 
     baseurl="https://catalogoenlinea.bibliotecanacional.gov.co"
     
-    def __init__(self, url, sesion=None):
-        
-        if not sesion:
-            sesion=requests.Session()
-        self.s=sesion
+    def __init__(self, url):
 
         if "https" in url:
-            r=sesion.get(url)
+            r=requests.get(url)
         else:
-            r=sesion.get(self.baseurl+url)            
+            u=self.baseurl+url
+            r=requests.get(u)            
 
         soup=BeautifulSoup(r.content,"lxml")
         biblio=soup.find(class_="detail_biblio")
@@ -55,34 +53,41 @@ class ElementoBNC():
     def __str__(self):
         return f"{self.titulo} - {self.autor} ({self.fecha})"
 
-    def downloadContent(self, output_filename=None):
+    def downloadContent(self, path=None):
         """
         Descarga el archivo de audio encontrado en una página de contenido QuickTime de la Biblioteca Nacional de Colombia (e.g. https://catalogoenlinea.bibliotecanacional.gov.co/client/es_ES/search/stream/58063/false/0)
-        Si {output_filename} existe, lo guarda en el workspace como {output_filename}.extension_original
+        Si {path} existe, lo guarda en el workspace como {path}.extension_original
         Lo devuelve al contexto donde fue llamada la función
         """
-        r=self.s.get(self.baseurl+self.url_contenido)
+        r=requests.get(self.baseurl+self.url_contenido)
         soup=BeautifulSoup(r.content,'lxml')
         scripts=soup.findAll("script",src=None)
         assert len(scripts)==1, "Más de un o ningún archivo de contenido encontrado"
 
         script=scripts[0]
-        src=re.findall("[^,()]+",script.text)[1].split("'")[1]
+        src=re.findall("[^,()]+",script.string)[1].split("'")[1]
         url=self.baseurl+src
-        print(f"Descargando archivo de audio de {url}")
-        r2=self.s.get(url)
+        
+        # print(f"Descargando archivo de {url}")
+        # tic()
+        # r2=requests.get(url)
+        # toc("Sin streaming")
 
-        if output_filename:
-            headers=r2.headers
+        # tic()
+        r3,data=utils.download_progressbar(url)
+        # toc("Con streaming")
+
+        if path:
+            headers=r3.headers
             original_name=headers["Content-Disposition"].partition("''")[-1]
             extension=original_name.split(".")[-1]
 
-            salida=f"{output_filename}.{extension}"
+            salida=f"{path}.{extension}"
             print(f"Guardando archivo {original_name} como {salida}")
-            open(salida,"wb").write(r2.content)
+            open(salida,"wb+").write(data)
 
         #Devuelve archivo para trabajar con él
-        return r2.content
+        return data
 
 class bnc():
     """
@@ -90,13 +95,6 @@ class bnc():
        https://catalogoenlinea.bibliotecanacional.gov.co/client/es_ES/bd/?
     """
     baseurl="https://catalogoenlinea.bibliotecanacional.gov.co"
-
-    def __init__(self, sesion=None):
-        if sesion:
-            self.s=sesion
-        else:
-            self.s=requests.Session()
-    
     
     def search(self,filter_,max_elements=12):
         """
@@ -118,7 +116,7 @@ class bnc():
                 "rw":rw
             }
 
-            r=self.s.get(url,params=query)            
+            r=requests.get(url,params=query)            
 
             soup=BeautifulSoup(r.content,"lxml")
             results=soup.findAll(class_="results_bio")
@@ -129,10 +127,3 @@ class bnc():
 
         return todos
         
-
-if __name__ == "__main__":
-    
-    sesion=bnc()
-    resultados=sesion.search("george list",max_elements=24)
-
-    print(resultados)
