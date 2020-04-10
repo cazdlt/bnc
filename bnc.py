@@ -53,7 +53,7 @@ class ElementoBNC():
     def __str__(self):
         return f"{self.titulo} - {self.autor} ({self.fecha})"
 
-    def downloadContent(self, path=None):
+    def downloadContent(self, path=None,filename=None):
         """
         Descarga el archivo de audio encontrado en una página de contenido QuickTime de la Biblioteca Nacional de Colombia (e.g. https://catalogoenlinea.bibliotecanacional.gov.co/client/es_ES/search/stream/58063/false/0)
         Si {path} existe, lo guarda en el workspace como {path}.extension_original
@@ -82,8 +82,9 @@ class ElementoBNC():
             original_name=headers["Content-Disposition"].partition("''")[-1]
             extension=original_name.split(".")[-1]
 
-            salida=f"{path}.{extension}"
-            print(f"Guardando archivo {original_name} como {salida}")
+            filename=f"{filename}.{extension}" if filename is not None else original_name
+            salida=f"{path}/{filename}"
+            print(f"Guardando archivo {original_name} como {filename}")
             open(salida,"wb+").write(data)
 
         #Devuelve archivo para trabajar con él
@@ -96,7 +97,7 @@ class bnc():
     """
     baseurl="https://catalogoenlinea.bibliotecanacional.gov.co"
     
-    def search(self,filter_,max_elements=12):
+    def search(self,filter_,autor=None,max_elements=12):
         """
             max_elements siempre se redondea a ceil(12)
             e.g. 
@@ -112,7 +113,7 @@ class bnc():
         for rw in range(0,max_elements,12):
             #print(rw)
             query={
-                "qu":filter_,
+                "qu":filter_ if not autor else [filter_,f"AUTHOR={autor}"],
                 "rw":rw
             }
 

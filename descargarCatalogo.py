@@ -2,14 +2,17 @@ from bnc import bnc,ElementoBNC
 import os
 import re
 
-buscar="George List"
+# buscar="George List"
+buscar="Bullerengue"
+autor="List"
 root_salida="output"
-num_elementos=5
+num_elementos=15
 
 print("Buscando...")
-resultados=bnc().search(buscar,max_elements=num_elementos)
+resultados=bnc().search(buscar,max_elements=num_elementos,autor=autor)
+assert len(resultados)>0,"Ningún elemento encontrado."
 print(f"Se han recuperado los primeros {len(resultados)} elementos.")
-print(f"Descargando los primeros {num_elementos}\n")
+print(f"Descargando los primeros {min(len(resultados),num_elementos)}\n")
 
 catalogo="DESCARGADO:\n\n"
 for idx,resultado in enumerate(resultados):
@@ -19,6 +22,9 @@ for idx,resultado in enumerate(resultados):
 
     filename=re.sub('[\\\/\*\?\|\[\]\(\):"<>]',"",resultado.titulo)
     filename=re.sub("\s{2,}"," - ",filename)+" - "+resultado.fecha
+    a,b = 'ÁÉÍÓÚÜáéíóúü','AEIOUUaeiouu'
+    trans = filename.maketrans(a,b)
+    filename=filename.translate(trans)
     
     path=f"./{root_salida}/{buscar}/{filename}"
     info=f"Título: {resultado.titulo}\n"
@@ -35,7 +41,7 @@ for idx,resultado in enumerate(resultados):
     else:
         os.makedirs(path, exist_ok=True)       
         print(f"\nDescargando de: {resultado}")
-        resultado.downloadContent(path=path+"/"+filename)
+        resultado.downloadContent(path=path)
 
     open(f"{path}/info.txt","w+",encoding="utf-8").write(info)
 
