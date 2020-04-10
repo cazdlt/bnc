@@ -1,6 +1,7 @@
 # bnc
 Descarga de contenido de la Bilioteca Nacional de Colombia (BNC). <br>
-El contenido de la BNC es abierto y fácilmente descargable desde su catálogo, esta herramienta solo facilita esta operación. <br>
+El contenido de la BNC es abierto y fácilmente descargable desde su [catálogo](https://catalogoenlinea.bibliotecanacional.gov.co/client/es_ES/bd/?), esta herramienta solo facilita esta operación. <br>
+Los derechos del contenido descargado le pertenecen a la Biblioteca Nacional de Colombia.
 Capacidades:
 - Realizar búsquedas de elementos 
     - También admite búsquedas por autor
